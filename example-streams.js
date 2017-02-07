@@ -10,16 +10,16 @@ if(!inputFile || !outputFile) {
   process.exit();
 }
 
-es.pipeline(
-  fs.createReadStream(inputFile),
-  es.split(),
-  through2.obj(function(chunk, enc, callback) {
+fs.createReadStream(inputFile)
+  .pipe(es.split())
+  .pipe(through2.obj(function(chunk, enc, callback) {
     if(chunk.length > 0) {
       this.push({length: chunk.length});
       this.push({uppercase: chunk.toUpperCase()});
     }
     callback();
-  }),
-  es.stringify(),
-  fs.createWriteStream(outputFile)
-);
+  }))
+  .pipe(es.stringify())
+  .pipe(fs.createWriteStream(outputFile).on('close', function() {
+    console.log('records written to: ' + outputFile);
+  }));
