@@ -20,8 +20,6 @@ es.pipeline(
     }
     callback();
   }),
-  es.map(function(data, callback) {
-    callback(null, JSON.stringify(data) + "\n");
-  }),
+  es.stringify(),
   fs.createWriteStream(outputFile)
 );
